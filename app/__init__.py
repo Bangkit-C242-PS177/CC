@@ -2,6 +2,8 @@
 
 from flask import Flask
 from app.config import Config
+from flask_jwt_extended import JWTManager
+# from flask_migrate import Migrate  # Import Flask-Migrate
 from app.utils.database import db
 from app.routes import auth_bp, history_blueprint, profile_blueprint  # Sesuaikan nama import blueprint
 
@@ -12,6 +14,9 @@ def create_app():
 
     # Inisialisasi database
     db.init_app(app)
+    jwt = JWTManager(app)
+
+    # migrate = Migrate(app, db)
 
     # Daftarkan blueprint dengan prefix URL masing-masing
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
@@ -19,3 +24,4 @@ def create_app():
     app.register_blueprint(profile_blueprint, url_prefix="/api/profile")
 
     return app
+

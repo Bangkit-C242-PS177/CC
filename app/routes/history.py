@@ -26,11 +26,175 @@ import numpy as np  # Pastikan NumPy diimpor
 # Import lainnya yang diperlukan, seperti model dan database
 import json
 
+# @history_blueprint.route("/", methods=["POST"])
+# def post_scan():
+#     """Endpoint untuk melakukan scan dan menyimpan hasil ke database."""
+#     try:
+#         user_id = get_user_id_from_session()  # Ambil user_id dari sesi
+
+#         # Ambil file gambar dari request
+#         file = request.files.get("file")
+#         if not file:
+#             return jsonify({"error": "Tidak ada file yang diunggah"}), 400
+
+#         # Validasi ekstensi file
+#         if not allowed_file(file.filename):
+#             return jsonify({"error": "Tipe file tidak valid. Hanya png, jpg, jpeg yang diperbolehkan."}), 400
+
+#         # Buat nama file dengan timestamp
+#         timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+#         filename = f"{user_id}_{timestamp}_{file.filename}"
+
+#         # Unggah file ke Cloud Storage
+#         public_url = upload_file_to_cloud_storage(file, filename)
+#         if public_url is None:
+#             return jsonify({"error": "Gagal mengunggah file ke cloud storage."}), 500
+
+#         # Preprocess gambar
+#         image_array = preprocess_image(file)
+#         if image_array is None:
+#             return jsonify({"error": "Gagal melakukan preprocessing gambar"}), 400
+
+#         # Memuat model untuk prediksi
+#         model_conditions, model_type = load_model_from_local()
+
+#         # Cek apakah model dimuat dengan benar
+#         if model_conditions is None or model_type is None:
+#             return jsonify({"error": "Model tidak dimuat dengan benar."}), 500
+
+#         # Prediksi menggunakan model
+#         predictions_skin_conditions = model_conditions.predict(image_array)
+#         predictions_skin_type = model_type.predict(image_array)
+
+#         # Konversi prediksi ke list jika dalam format numpy array
+#         predictions_skin_conditions = predictions_skin_conditions.tolist() if isinstance(predictions_skin_conditions, np.ndarray) else predictions_skin_conditions
+#         predictions_skin_type = predictions_skin_type.tolist() if isinstance(predictions_skin_type, np.ndarray) else predictions_skin_type
+
+#         # Dekode hasil prediksi
+#         skin_conditions_labels = ["Acne", "Eye Bags"]
+#         skin_type_labels = ["Normal", "Oily", "Dry"]
+
+#         decoded_skin_conditions = decode_prediction(predictions_skin_conditions, skin_conditions_labels)
+#         decoded_skin_type = decode_prediction(predictions_skin_type, skin_type_labels)
+
+#         # Debugging output
+#         print("Decoded Skin Conditions:", decoded_skin_conditions)
+#         print("Decoded Skin Type:", decoded_skin_type)
+
+#         # Simpan hasil scan ke database
+#         new_entry = History(
+#             user_id=user_id,
+#             filename=filename,
+#             predictions_skin_type=json.dumps(decoded_skin_type),  # Convert dict to JSON string
+#             predictions_skin_conditions=json.dumps(decoded_skin_conditions),  # Convert dict to JSON string
+#             timestamp=datetime.utcnow(),
+#         )
+#         db.session.add(new_entry)
+#         db.session.commit()
+
+#         # Mengembalikan respons JSON
+#         return jsonify({
+#             "user_id": user_id,  # Menyertakan user_id
+#             "filename": filename,  # Menyertakan nama file
+#             "skin_conditions": decoded_skin_conditions,
+#             "skin_type": decoded_skin_type,
+#             # "image_url": public_url  # Menyertakan URL gambar yang diunggah
+#         })
+
+#     except Exception as e:
+#         # Menangkap dan mengembalikan error dalam format JSON
+#         return jsonify({"error": str(e)}), 500
+
+
+# @history_blueprint.route("/", methods=["POST"])
+# def post_scan():
+#     """Endpoint untuk melakukan scan dan menyimpan hasil ke database."""
+#     try:
+#         user_id = get_user_id_from_session()  # Ambil user_id dari sesi
+
+#         # Ambil file gambar dari request
+#         file = request.files.get("file")
+#         if not file:
+#             return jsonify({"error": "Tidak ada file yang diunggah"}), 400
+
+#         # Validasi ekstensi file
+#         if not allowed_file(file.filename):
+#             return jsonify({"error": "Tipe file tidak valid. Hanya png, jpg, jpeg yang diperbolehkan."}), 400
+
+#         # Buat nama file dengan timestamp
+#         timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
+#         filename = f"{user_id}_{timestamp}_{file.filename}"
+
+#         # Unggah file ke Cloud Storage
+#         public_url = upload_file_to_cloud_storage(file, filename)
+#         if public_url is None:
+#             return jsonify({"error": "Gagal mengunggah file ke cloud storage."}), 500
+
+#         # Preprocess gambar
+#         image_array = preprocess_image(file)
+#         if image_array is None:
+#             return jsonify({"error": "Gagal melakukan preprocessing gambar"}), 400
+
+#         # Memuat model untuk prediksi
+#         model_conditions, model_type = load_model_from_local()
+
+#         # Cek apakah model dimuat dengan benar
+#         if model_conditions is None or model_type is None:
+#             return jsonify({"error": "Model tidak dimuat dengan benar."}), 500
+
+#         # Prediksi menggunakan model
+#         predictions_skin_conditions = model_conditions.predict(image_array)
+#         predictions_skin_type = model_type.predict(image_array)
+
+#         # Dekode hasil prediksi
+#         skin_conditions_labels = ["Acne", "Eye Bags", "Normal"]
+#         skin_type_labels = ["Oily", "Normal", "Dry"]
+
+#         decoded_skin_conditions = decode_prediction(predictions_skin_conditions, skin_conditions_labels, threshold=0.5)
+#         decoded_skin_type = decode_prediction(predictions_skin_type, skin_type_labels, threshold=0.5)
+
+#         # Debugging output
+#         print("Decoded Skin Conditions:", decoded_skin_conditions)
+#         print("Decoded Skin Type:", decoded_skin_type)
+
+#         # Simpan hasil scan ke database
+#         new_entry = History(
+#             user_id=user_id,
+#             filename=filename,
+#             predictions_skin_type=json.dumps(decoded_skin_type),  # Convert nested array to JSON string
+#             predictions_skin_conditions=json.dumps(decoded_skin_conditions),  # Convert nested array to JSON string
+#             timestamp=datetime.utcnow(),
+#         )
+#         db.session.add(new_entry)
+#         db.session.commit()
+
+#         # Mengembalikan respons JSON
+#         return jsonify({
+#             "user_id": user_id,
+#             "filename": filename,
+#             "skin_conditions": decoded_skin_conditions,
+#             "skin_type": decoded_skin_type,
+#             "image_url": public_url
+#         })
+
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from app.utils.database import db
+from app.models import History
+from datetime import datetime
+import json
+
+history_blueprint = Blueprint("history", __name__)
+
 @history_blueprint.route("/", methods=["POST"])
+@jwt_required()  # Menambahkan dekorator untuk memastikan pengguna terautentikasi
 def post_scan():
     """Endpoint untuk melakukan scan dan menyimpan hasil ke database."""
     try:
-        user_id = get_user_id_from_session()  # Ambil user_id dari sesi
+        user_id = str(get_jwt_identity())  # Pastikan user_id adalah string
 
         # Ambil file gambar dari request
         file = request.files.get("file")
@@ -66,27 +230,19 @@ def post_scan():
         predictions_skin_conditions = model_conditions.predict(image_array)
         predictions_skin_type = model_type.predict(image_array)
 
-        # Konversi prediksi ke list jika dalam format numpy array
-        predictions_skin_conditions = predictions_skin_conditions.tolist() if isinstance(predictions_skin_conditions, np.ndarray) else predictions_skin_conditions
-        predictions_skin_type = predictions_skin_type.tolist() if isinstance(predictions_skin_type, np.ndarray) else predictions_skin_type
-
         # Dekode hasil prediksi
-        skin_conditions_labels = ["Acne", "Eye Bags"]
-        skin_type_labels = ["Normal", "Oily", "Dry"]
+        skin_conditions_labels = ["Acne", "Eye Bags", "Normal"]
+        skin_type_labels = ["Oily", "Normal", "Dry"]
 
-        decoded_skin_conditions = decode_prediction(predictions_skin_conditions, skin_conditions_labels)
-        decoded_skin_type = decode_prediction(predictions_skin_type, skin_type_labels)
-
-        # Debugging output
-        print("Decoded Skin Conditions:", decoded_skin_conditions)
-        print("Decoded Skin Type:", decoded_skin_type)
+        decoded_skin_conditions = decode_prediction(predictions_skin_conditions, skin_conditions_labels, threshold=0.5)
+        decoded_skin_type = decode_prediction(predictions_skin_type, skin_type_labels, threshold=0.5)
 
         # Simpan hasil scan ke database
         new_entry = History(
             user_id=user_id,
             filename=filename,
-            predictions_skin_type=json.dumps(decoded_skin_type),  # Convert dict to JSON string
-            predictions_skin_conditions=json.dumps(decoded_skin_conditions),  # Convert dict to JSON string
+            predictions_skin_type=json.dumps(decoded_skin_type),
+            predictions_skin_conditions=json.dumps(decoded_skin_conditions),
             timestamp=datetime.utcnow(),
         )
         db.session.add(new_entry)
@@ -94,15 +250,14 @@ def post_scan():
 
         # Mengembalikan respons JSON
         return jsonify({
-            "user_id": user_id,  # Menyertakan user_id
-            "filename": filename,  # Menyertakan nama file
+            "user_id": user_id,
+            "filename": filename,
             "skin_conditions": decoded_skin_conditions,
             "skin_type": decoded_skin_type,
-            # "image_url": public_url  # Menyertakan URL gambar yang diunggah
-        })
+            "image_url": public_url
+        }), 201  # Mengembalikan status 201 Created
 
     except Exception as e:
-        # Menangkap dan mengembalikan error dalam format JSON
         return jsonify({"error": str(e)}), 500
 
 @history_blueprint.route("/history", methods=["GET"])

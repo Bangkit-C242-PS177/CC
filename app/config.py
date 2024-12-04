@@ -42,7 +42,7 @@ class Config:
     # Path to Model local Conditions Machine Learning
     MODEL_CONDITIONS = os.environ.get(
         "CONDITIONS",
-        os.path.join(BASE_DIR, '..', 'migrations', 'model', 'skin_conditions_model_2.h5')
+        os.path.join(BASE_DIR, '..', 'migrations', 'model', 'skin_conditions_model.h5')
     )
 
     MODEL_TYPE = os.environ.get(
