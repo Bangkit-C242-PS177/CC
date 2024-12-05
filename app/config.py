@@ -27,11 +27,11 @@ class Config:
     # Base directory local file
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-    # Path to Firebase service account file
-    FIREBASE_CREDENTIALS_PATH = os.environ.get(
-        "FIREBASE_CREDENTIALS", 
-        os.path.join(BASE_DIR, '..', 'migrations', 'firebase-account-storage.json')
-    )
+    # # Path to Firebase service account file
+    # FIREBASE_CREDENTIALS_PATH = os.environ.get(
+    #     "FIREBASE_CREDENTIALS", 
+    #     os.path.join(BASE_DIR, '..', 'migrations', 'firebase-account-storage.json')
+    # )
 
     # Path to Cloud Storage Admin
     CLOUD_STORAGE_ADMIN = os.environ.get(
@@ -42,7 +42,7 @@ class Config:
     # Path to Model local Conditions Machine Learning
     MODEL_CONDITIONS = os.environ.get(
         "CONDITIONS",
-        os.path.join(BASE_DIR, '..', 'migrations', 'model', 'skin_conditions_model_2.h5')
+        os.path.join(BASE_DIR, '..', 'migrations', 'model', 'skin_conditions_model.h5')
     )
 
     MODEL_TYPE = os.environ.get(

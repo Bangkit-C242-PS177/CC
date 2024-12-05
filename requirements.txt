@@ -2,8 +2,7 @@ Flask
 Flask-SQLAlchemy
 Flask-Migrate
 mysql-connector-python
-firebase-admin
 gunicorn
 tensorflow
 pillow
-python-dotenv
+PyJWT

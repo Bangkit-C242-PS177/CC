@@ -70,25 +70,64 @@ def preprocess_image(file):
         return None
 
 #     return decoded_predictions
-def decode_prediction(predictions, labels, not_detected_label="Not Detected"):
-    """Decode the prediction results into readable labels with percentages."""
-    if predictions is None or len(predictions) == 0:
-        return {label: "0.00%" for label in labels}  # Kembalikan semua label dengan 0%
+# def decode_prediction(predictions, labels, not_detected_label="Not Detected"):
+#     """Decode the prediction results into readable labels with percentages."""
+#     if predictions is None or len(predictions) == 0:
+#         return {label: "0.00%" for label in labels}  # Kembalikan semua label dengan 0%
 
-    decoded_predictions = {label: "0.00%" for label in labels}  # Inisialisasi semua label dengan 0%
+#     decoded_predictions = {label: "0.00%" for label in labels}  # Inisialisasi semua label dengan 0%
+
+#     # Flatten the prediction to ensure it's a 1D array
+#     predictions = np.squeeze(predictions)  # Removes dimensions of size 1
+
+#     # Ensure that predictions is a numpy array
+#     if isinstance(predictions, np.ndarray):
+#         if len(predictions) != len(labels):
+#             raise ValueError("Length of predictions and labels must match.")
+
+#         for i in range(len(predictions)):
+#             # Menggunakan threshold untuk klasifikasi biner
+#             if predictions[i] >= 0.5:  
+#                 decoded_predictions[labels[i]] = f"{predictions[i] * 100:.2f}%"
+#     else:
+#         raise TypeError("Predictions should be a numpy array.")
+
+#     return decoded_predictions
+
+def decode_prediction(predictions, labels, threshold=0.5, not_detected_label="Not Detected"):
+    """Decode the prediction results into nested array format with readable labels and percentages.
+
+    Args:
+        predictions (np.ndarray): Array of prediction probabilities.
+        labels (list): List of labels corresponding to predictions.
+        threshold (float): Threshold for determining detection.
+        not_detected_label (str): Label to return when the prediction is below the threshold.
+
+    Returns:
+        list: A nested list with labels and their corresponding percentages.
+    """
+    # Memastikan bahwa prediksi tidak kosong
+    if predictions is None or len(predictions) == 0:
+        return [[label, "0.00%"] for label in labels]  # Kembalikan semua label dengan 0%
+
+    # Inisialisasi nested array
+    decoded_predictions = []
 
     # Flatten the prediction to ensure it's a 1D array
     predictions = np.squeeze(predictions)  # Removes dimensions of size 1
 
-    # Ensure that predictions is a numpy array
+    # Pastikan bahwa predictions adalah array numpy
     if isinstance(predictions, np.ndarray):
         if len(predictions) != len(labels):
             raise ValueError("Length of predictions and labels must match.")
 
-        for i in range(len(predictions)):
-            # Menggunakan threshold untuk klasifikasi biner
-            if predictions[i] >= 0.5:  
-                decoded_predictions[labels[i]] = f"{predictions[i] * 100:.2f}%"
+        # Iterasi melalui semua label
+        for i in range(len(labels)):
+            if predictions[i] >= threshold:  # Threshold untuk klasifikasi
+                decoded_predictions.append([labels[i], f"{predictions[i] * 100:.2f}%"])
+            else:
+                decoded_predictions.append([labels[i], f"{not_detected_label} (0.00%)"])  # Jika tidak terdeteksi
+
     else:
         raise TypeError("Predictions should be a numpy array.")
 
