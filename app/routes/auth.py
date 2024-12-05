@@ -103,10 +103,17 @@
 #     except Exception as e:
 #         return jsonify({"error": str(e)}), 400
 
+<<<<<<< HEAD
 from flask import Blueprint, request, jsonify, session
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
 from app import db
 from app.models import User, History
+=======
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
+from app import db
+from app.models import User
+>>>>>>> dfcdb8cb0e780c67bc1cb10cb76be05800989766
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import json
@@ -175,9 +182,12 @@ def login():
 
         # Membuat token JWT
         access_token = create_access_token(identity=str(user.id))  # Pastikan user.id adalah string
+<<<<<<< HEAD
 
         # Simpan user_id dalam sesi
         session['user_id'] = user.id  # Simpan user_id dalam sesi
+=======
+>>>>>>> dfcdb8cb0e780c67bc1cb10cb76be05800989766
 
         return jsonify({
             "message": "Login berhasil",
@@ -196,8 +206,12 @@ def login():
 def logout():
     jti = get_jwt()["jti"]  # Ambil JTI (JWT ID) dari token yang sedang digunakan
     BLOCKLIST.add(jti)  # Tambahkan JTI ke dalam blocklist
+<<<<<<< HEAD
     session.pop('user_id', None)  # Hapus user_id dari sesi saat logout
     return jsonify(msg="Logout berhasil"), 200  # Kembalikan respons sukses
+=======
+    return jsonify(msg="logout berhasil"), 200  # Kembalikan respons sukses
+>>>>>>> dfcdb8cb0e780c67bc1cb10cb76be05800989766
 
 # Contoh rute yang dilindungi
 @auth_bp.route("/protected", methods=["GET"])

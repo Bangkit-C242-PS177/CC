@@ -189,6 +189,7 @@ import json
 
 history_blueprint = Blueprint("history", __name__)
 
+<<<<<<< HEAD
 # 
 @history_blueprint.route("/", methods=["POST"])
 @jwt_required(optional=True)  # Mengizinkan akses tanpa token
@@ -201,6 +202,14 @@ def post_scan():
             user_id = session.get('user_id')  # Ambil user_id dari sesi jika token tidak ada
         if user_id is None:
             return jsonify({"error": "Pengguna tidak terautentikasi"}), 401
+=======
+@history_blueprint.route("/", methods=["POST"])
+@jwt_required()  # Menambahkan dekorator untuk memastikan pengguna terautentikasi
+def post_scan():
+    """Endpoint untuk melakukan scan dan menyimpan hasil ke database."""
+    try:
+        user_id = str(get_jwt_identity())  # Pastikan user_id adalah string
+>>>>>>> dfcdb8cb0e780c67bc1cb10cb76be05800989766
 
         # Ambil file gambar dari request
         file = request.files.get("file")

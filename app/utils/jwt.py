@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # from datetime import datetime, timedelta
 # import jwt
 # import os
@@ -61,6 +62,11 @@ from datetime import datetime, timedelta
 import jwt
 import os
 import uuid  # Pastikan untuk mengimpor uuid
+=======
+from datetime import datetime, timedelta
+import jwt
+import os
+>>>>>>> dfcdb8cb0e780c67bc1cb10cb76be05800989766
 
 # Kunci rahasia untuk encoding dan decoding JWT
 JWT_SECRET = os.getenv('JWT_SECRET', 'your_default_secret_key')
